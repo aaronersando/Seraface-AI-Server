@@ -11,11 +11,16 @@ class ProductService:
         if not product:
             return None
         
+        # Convert datetime to string if it's a datetime object
+        fetched_at = product["fetched_at"]
+        if hasattr(fetched_at, 'isoformat'):
+            fetched_at = fetched_at.isoformat()
+        
         return {
             "id": str(product["_id"]),
             "key": product["key"],
             "query": product["query"],
-            "fetched_at": product["fetched_at"],
+            "fetched_at": fetched_at,
             "google_product_url": product.get("google_product_url"),
             "product_api_url": product.get("product_api_url"),
             "title": product["title"],

@@ -42,9 +42,9 @@ class DataStore:
                 "_id": session_id,
                 "session_id": session_id,
                 "phase": phase,
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.utcnow().isoformat(),
                 "data": data,
-                "expires_at": datetime.utcnow() + timedelta(days=90),
+                "expires_at": (datetime.utcnow() + timedelta(days=90)).isoformat(),
                 "version": "1.0"
             }
             
@@ -66,9 +66,19 @@ class DataStore:
             if not document:
                 return None
 
-            if document.get("expires_at") and document["expires_at"] < datetime.utcnow():
-                await collection.delete_one({"_id": session_id})
-                return None
+            # Check if document is expired
+            expires_at = document.get("expires_at")
+            if expires_at:
+                # Parse expires_at string back to datetime for comparison
+                try:
+                    from datetime import datetime as dt
+                    expires_dt = dt.fromisoformat(expires_at)
+                    if expires_dt < datetime.utcnow():
+                        await collection.delete_one({"_id": session_id})
+                        return None
+                except (ValueError, AttributeError):
+                    # If parsing fails, treat as not expired
+                    pass
             
             return document.get("data")
             
@@ -187,11 +197,12 @@ class DataStore:
             cleanup_results = {}
             total_deleted = 0
             current_time = datetime.utcnow()
+            current_time_str = current_time.isoformat()
             
             for phase in ["phase1", "phase2", "phase3", "phase4"]:
                 collection = db[self._get_collection_name(phase)]
                 result = await collection.delete_many({
-                    "expires_at": {"$lt": current_time}
+                    "expires_at": {"$lt": current_time_str}
                 })
                 cleanup_results[phase] = result.deleted_count
                 total_deleted += result.deleted_count

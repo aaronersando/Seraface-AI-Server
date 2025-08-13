@@ -209,7 +209,7 @@ class ProductSearchService:
                 "_id": query_key,
                 "key": query_key,
                 **product_data,
-                "cached_at": datetime.utcnow()
+                "cached_at": datetime.utcnow().isoformat()
             }
             
             await collection.replace_one(
@@ -237,8 +237,8 @@ class ProductSearchService:
                 "product_query": product_data["query"],
                 "product_data": product_data,
                 "recommendation_context": recommendation_context,
-                "recommended_at": datetime.utcnow(),
-                "expires_at": datetime.utcnow() + timedelta(days=365)  # Keep user recommendations longer
+                "recommended_at": datetime.utcnow().isoformat(),
+                "expires_at": (datetime.utcnow() + timedelta(days=365)).isoformat()  # Keep user recommendations longer
             }
             
             await collection.replace_one(
