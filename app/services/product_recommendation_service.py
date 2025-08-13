@@ -202,7 +202,7 @@ User Profile:
 
 Instructions:
 - Recommend 2-3 future product categories from the available list
-- For each category, suggest 2-3 specific products
+- For each category, suggest 1 specific product
 - Output as JSON array with objects containing "category" and "products" fields
 - Products should have "name" and "price" fields with PHP pricing
 - Prices should be strings like "₱1,500.00" (Philippine Peso format)
@@ -330,7 +330,7 @@ Format:
                     if product_name:
                         recommendation_context = {
                             "category": category,
-                            "recommended_price": product.get("price", "$0.00"),
+                            "recommended_price": product.get("price", "₱0.00"),
                             "user_context": context,
                             "ai_recommended": True,
                             "future_recommendation": True
@@ -429,7 +429,7 @@ Format:
             enriched_response = {
                 "allocation": allocation,
                 "products": enriched_products,  # Enriched version
-                "total_budget": f"${total_budget}",
+                "total_budget": f"₱{total_budget}",
                 "future_recommendations": enriched_future,
                 "enrichment_summary": {
                     "total_products_searched": sum(len(products) for products in product_results.values()),
@@ -442,7 +442,7 @@ Format:
             api_response = {
                 "allocation": allocation,
                 "products": product_results,  # Original format
-                "total_budget": f"${total_budget}",
+                "total_budget": f"₱{total_budget}",
                 "future_recommendations": future  # Original format
             }
 
