@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+
 env_path = Path(__file__).parent.parent.parent / ".env.local"
 load_dotenv(dotenv_path=env_path)
 
@@ -34,6 +35,8 @@ class Settings:
     APP_TITLE: str = os.getenv("APP_TITLE", "Seraface AI Server")
     APP_DESCRIPTION: str = os.getenv("APP_DESCRIPTION", "API for skincare product management")
     APP_VERSION: str = os.getenv("APP_VERSION", "1.0.0")
+
+    NGROK_AUTH_TOKEN = os.getenv("NGROK_AUTH_TOKEN", "NGROK_AUTH_TOKEN")
 
     def __init__(self):
         if env_path.exists():
