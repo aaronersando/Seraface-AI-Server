@@ -7,6 +7,7 @@ PRESERVED ORIGINAL LOGIC - Added product search integration.
 """
 
 import json
+from datetime import datetime
 import google.generativeai as genai
 from fastapi import HTTPException
 from typing import List, Dict, Any
@@ -22,6 +23,23 @@ class Phase3Service:
     
     def __init__(self):
         self.model = genai.GenerativeModel('gemini-2.0-flash')
+
+    @staticmethod
+    def sanitize_datetime_objects(data: Any) -> Any:
+        """
+        Recursively convert datetime objects to ISO format strings for JSON serialization.
+        Handles nested dictionaries, lists, and datetime objects.
+        """
+        if isinstance(data, datetime):
+            return data.isoformat()
+        elif isinstance(data, dict):
+            return {key: Phase3Service.sanitize_datetime_objects(value) for key, value in data.items()}
+        elif isinstance(data, list):
+            return [Phase3Service.sanitize_datetime_objects(item) for item in data]
+        elif hasattr(data, 'isoformat'):  # Handle other datetime-like objects
+            return data.isoformat()
+        else:
+            return data
 
     def get_budget_allocation(self, form_data: FormData) -> Dict[str, int]:
         """
@@ -446,9 +464,13 @@ Format:
                 "future_recommendations": future  # Original format
             }
 
+            # Create clean data for Phase 4 (without datetime objects)
+            clean_data_for_phase4 = self.sanitize_datetime_objects(enriched_response)
+
             return {
                 "api_response": api_response,  # For API response
-                "enriched_data": enriched_response  # For database storage
+                "enriched_data": enriched_response,  # For database storage (full enriched data)
+                "clean_data_for_phase4": clean_data_for_phase4  # Clean data for Phase 4
             }
 
         except Exception as e:

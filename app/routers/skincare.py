@@ -184,12 +184,13 @@ async def phase3_product_recommendations(session_id: str) -> ProductRecommendati
         # Use enhanced phase3 logic with product search integration
         phase3_result = await phase3_service.budget_distribution(phase3_input, session_id)
         
-        # Extract the API response and enriched data
+        # Extract the API response and clean data for Phase 4
         api_response = phase3_result["api_response"]
         enriched_data = phase3_result["enriched_data"]
+        clean_data_for_phase4 = phase3_result["clean_data_for_phase4"]
         
-        # Save enriched data to database (includes detailed product info)
-        success = await data_store.save_phase_data(session_id, "phase3", enriched_data)
+        # Save clean data for Phase 4 (without datetime objects)
+        success = await data_store.save_phase_data(session_id, "phase3", clean_data_for_phase4)
         
         if not success:
             raise HTTPException(
