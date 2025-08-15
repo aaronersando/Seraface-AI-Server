@@ -1,5 +1,5 @@
-*.json
-*.env
-__pycache__/
-data/
-api/
+# *.json
+# *.env
+# __pycache__/
+# data/
+# api/
