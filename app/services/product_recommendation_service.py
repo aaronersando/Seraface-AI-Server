@@ -219,7 +219,7 @@ User Profile:
 {analysis_context}
 
 Instructions:
-- Recommend 2-3 future product categories from the available list
+- Recommend 1 future product categories from the available list
 - For each category, suggest 1 specific product
 - Output as JSON array with objects containing "category" and "products" fields
 - Products should have "name" and "price" fields with PHP pricing
